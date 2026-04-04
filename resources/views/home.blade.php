@@ -50,6 +50,11 @@
             color: red;
             font-weight: bold;
         }
+
+        a.card-link {
+            text-decoration: none;
+            color: inherit;
+        }
     </style>
 </head>
 
@@ -58,11 +63,11 @@
 <!-- MENU -->
 <nav class="navbar navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand text-white" href="#">💻 SHOP LAPTOP</a>
+        <a class="navbar-brand text-white" href="/">💻 SHOP LAPTOP</a>
 
         <div>
-            <a class="me-3" href="#">Trang chủ</a>
-            <a class="me-3" href="#">Sản phẩm</a>
+            <a class="me-3" href="/">Trang chủ</a>
+            <a class="me-3" href="/products">Sản phẩm</a>
             <a class="me-3" href="#">Giỏ hàng</a>
             <a href="#">Liên hệ</a>
         </div>
@@ -77,78 +82,36 @@
 <!-- SẢN PHẨM -->
 <div class="container mt-5">
 
-    <div class="row g-4 mt-2">
+    <h3 class="mb-4">💥 Sản phẩm nổi bật</h3>
 
-        <!-- SP 1 -->
-        <div class="col-md-4">
-            <div class="card shadow">
-                <img src="{{ asset('img/lap1.jpg') }}" class="card-img-top">
-                <div class="card-body text-center">
-                    <h5>Laptop Gaming</h5>
-                    <p class="price">20.000.000đ</p>
-                    <button class="btn btn-primary">Mua ngay</button>
-                </div>
-            </div>
-        </div>
+    <div class="row g-4">
 
-        <!-- SP 2 -->
+        @foreach($products as $p)
         <div class="col-md-4">
-            <div class="card shadow">
-                <img src="{{ asset('img/lap2.jpg') }}" class="card-img-top">
-                <div class="card-body text-center">
-                    <h5>Macbook Pro</h5>
-                    <p class="price">35.000.000đ</p>
-                    <button class="btn btn-primary">Mua ngay</button>
-                </div>
-            </div>
-        </div>
 
-        <!-- SP 3 -->
-        <div class="col-md-4">
-            <div class="card shadow">
-                <img src="{{ asset('img/lap3.jpg') }}" class="card-img-top">
-                <div class="card-body text-center">
-                    <h5>Laptop Văn Phòng</h5>
-                    <p class="price">12.000.000đ</p>
-                    <button class="btn btn-primary">Mua ngay</button>
+            <!-- CLICK VÀO SẼ SANG DANH SÁCH -->
+            <a href="/product/{{ $p->id }}" class="card-link">
+
+                <div class="card shadow h-100">
+                    <img src="{{ asset($p->image) }}" class="card-img-top">
+
+                    <div class="card-body text-center">
+                        <h5>{{ $p->name }}</h5>
+                        <p class="price">{{ number_format($p->price) }}đ</p>
+                        <button class="btn btn-primary">Xem thêm</button>
+                    </div>
                 </div>
-            </div>
+
+            </a>
+
         </div>
- <!-- SP 4 -->
-    <div class="col-md-4">
-        <div class="card shadow">
-            <img src="{{ asset('img/lap4.jpg') }}" class="card-img-top">
-            <div class="card-body text-center">
-                <h5>Asus Gaming</h5>
-                <p class="price">18.000.000đ</p>
-                <button class="btn btn-primary">Mua ngay</button>
-            </div>
-        </div>
+        @endforeach
+
     </div>
 
-    <!-- SP 5 -->
-    <div class="col-md-4">
-        <div class="card shadow">
-            <img src="{{ asset('img/lap5.jpg') }}" class="card-img-top">
-            <div class="card-body text-center">
-                <h5>Dell XPS</h5>
-                <p class="price">25.000.000đ</p>
-                <button class="btn btn-primary">Mua ngay</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SP 6 -->
-    <div class="col-md-4">
-        <div class="card shadow">
-            <img src="{{ asset('img/lap6.jpg') }}" class="card-img-top">
-            <div class="card-body text-center">
-                <h5>HP Pavilion</h5>
-                <p class="price">15.000.000đ</p>
-                <button class="btn btn-primary">Mua ngay</button>
-            </div>
-        </div>
-    </div>
+    <!-- NÚT XEM TẤT CẢ -->
+    <div class="text-center mt-4">
+        <a href="/products" class="btn btn-dark px-4">Xem tất cả sản phẩm</a>
     </div>
 
 </div>

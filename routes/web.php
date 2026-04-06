@@ -155,3 +155,13 @@ Route::get('/admin/orders', function () {
     $orders = \App\Models\Order::all();
     return view('admin.orders', compact('orders'));
 });
+//Giao hàng
+
+Route::get('/admin/orders/{id}/deliver', function ($id) {
+    $order = \App\Models\Order::find($id);
+
+    $order->status = 'delivered';
+    $order->save();
+
+    return back();
+});

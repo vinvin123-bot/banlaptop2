@@ -1,167 +1,135 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
-use App\Models\Product;
+
 use App\Models\User;
+
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
-| 1. Public Routes (Ai cũng có thể xem)
+| 1. PUBLIC ROUTES
 |--------------------------------------------------------------------------
 */
 
-// Trang chủ hiển thị danh sách sản phẩm
-Route::get('/', function () {
-    $products = Product::all();
-    return view('home', compact('products'));
-})->name('home');
+// Trang chủ
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Giao diện đăng nhập
+// Danh sách sản phẩm
+Route::get('/products', [HomeController::class, 'products']);
+
+// Chi tiết sản phẩm
+Route::get('/product/{id}', [HomeController::class, 'detail']);
+
+
+/*
+|--------------------------------------------------------------------------
+| 2. LOGIN
+|--------------------------------------------------------------------------
+*/
+
+// Form login
 Route::get('/login', function () {
     if (Auth::check()) {
-        return Auth::user()->role === 'admin' ? redirect('/admin/products') : redirect('/');
+        return Auth::user()->role === 'admin'
+            ? redirect('/admin/products')
+            : redirect('/');
     }
     return view('login');
 })->name('login');
 
-// Xử lý logic đăng nhập
+// Xử lý login
 Route::post('/login', function (Request $request) {
+
     $credentials = $request->only('email', 'password');
 
     if (Auth::attempt($credentials)) {
-        $request->session()->regenerate(); // Bảo mật session
+        $request->session()->regenerate();
 
-        // Phân quyền hướng đi sau khi đăng nhập thành công
-        if (Auth::user()->role === 'admin') {
-            return redirect('/admin/products');
-        }
-        return redirect('/');
+        return Auth::user()->role === 'admin'
+            ? redirect('/admin/products')
+            : redirect('/');
     }
 
-    // Nếu sai tài khoản, quay lại kèm thông báo lỗi
-    return back()->with('error', 'Email hoặc mật khẩu không chính xác!');
+    return back()->with('error', 'Sai email hoặc mật khẩu!');
 });
+
 
 /*
 |--------------------------------------------------------------------------
-| 2. Route khởi tạo Admin (Dùng để sửa lỗi đăng nhập)
+| 3. TẠO ADMIN (chạy 1 lần rồi xóa cũng được)
 |--------------------------------------------------------------------------
-| Hướng dẫn: Truy cập đường dẫn /create-admin 1 lần duy nhất để tạo/cập nhật tài khoản.
 */
+
 Route::get('/create-admin', function () {
-    // Xóa user cũ nếu có để tránh xung đột mật khẩu chưa mã hóa
+
     User::where('email', 'admin@gmail.com')->delete();
 
-    // Tạo mới tài khoản admin chuẩn mã hóa Bcrypt
     User::create([
-        'name'     => 'Admin System',
-        'email'    => 'admin@gmail.com',
-        'password' => Hash::make('123456'), // Mật khẩu là 123456
-        'role'     => 'admin'
+        'name' => 'Admin',
+        'email' => 'admin@gmail.com',
+        'password' => Hash::make('123456'),
+        'role' => 'admin'
     ]);
 
-    return "Đã làm sạch dữ liệu cũ và tạo Admin thành công! <br> Email: admin@gmail.com | Pass: 123456 <br> <a href='/login'>Đi tới Đăng nhập</a>";
+    return "Tạo admin OK! → admin@gmail.com / 123456";
 });
+
 
 /*
 |--------------------------------------------------------------------------
-| 3. Admin Routes (Chỉ dành cho người đã đăng nhập)
+| 4. CART
 |--------------------------------------------------------------------------
 */
+
+// Thêm giỏ
+Route::get('/add-to-cart/{id}', [CartController::class, 'add']);
+
+// Xem giỏ
+Route::get('/cart', [CartController::class, 'index']);
+
+
+/*
+|--------------------------------------------------------------------------
+| 5. ORDER
+|--------------------------------------------------------------------------
+*/
+
+// Form checkout
+Route::get('/checkout', [OrderController::class, 'checkout']);
+
+// Xử lý đặt hàng
+Route::post('/checkout', [OrderController::class, 'store']);
+
+
+/*
+|--------------------------------------------------------------------------
+| 6. ADMIN
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware(['auth'])->group(function () {
-    
-    // Quản lý sản phẩm (Resource Route)
+
+    // CRUD sản phẩm
     Route::resource('/admin/products', ProductController::class);
 
-    // Đăng xuất
+    // Đơn hàng
+    Route::get('/admin/orders', [OrderController::class, 'admin']);
+
+    // Giao hàng
+    Route::get('/admin/orders/{id}/deliver', [OrderController::class, 'deliver']);
+
+    // Logout
     Route::post('/logout', function (Request $request) {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/login');
     })->name('logout');
-});
-//sản phẩm
-Route::get('/products', function () {
-    $products = \App\Models\Product::all();
-    return view('products', compact('products'));
-});
-//chi tiết sản phẩm
-Route::get('/product/{id}', function ($id) {
-    $p = \App\Models\Product::find($id);
-    return view('detail', compact('p'));
-});
-
-// Thêm vào giỏ
-Route::get('/add-to-cart/{id}', function ($id) {
-
-    $product = \App\Models\Product::find($id);
-
-    $cart = session()->get('cart', []);
-
-    if(isset($cart[$id])) {
-        $cart[$id]['quantity']++;
-    } else {
-        $cart[$id] = [
-            "name" => $product->name,
-            "price" => $product->price,
-            "quantity" => 1
-        ];
-    }
-
-    session()->put('cart', $cart);
-
-    return back()->with('success', 'Đã thêm vào giỏ hàng!');
-});
-
-
-// Trang giỏ hàng
-Route::get('/cart', function () {
-    return view('cart');
-});
-// Đặt hàng
-use App\Models\Order;
-
-Route::get('/checkout', function () {
-    return view('checkout');
-});
-
-Route::post('/checkout', function (Illuminate\Http\Request $request) {
-
-    $total = 0;
-
-    foreach(session('cart', []) as $item){
-        $total += $item['price'] * $item['quantity'];
-    }
-
-    Order ::create([
-        'name' => $request->name,
-        'phone' => $request->phone,
-        'address' => $request->address,
-        'total' => $total
-    ]);
-
-    session()->forget('cart');
-
-    return "Đặt hàng thành công!";
-});
-
-//Admin xem đơn
-Route::get('/admin/orders', function () {
-    $orders = \App\Models\Order::all();
-    return view('admin.orders', compact('orders'));
-});
-//Giao hàng
-
-Route::get('/admin/orders/{id}/deliver', function ($id) {
-    $order = \App\Models\Order::find($id);
-
-    $order->status = 'delivered';
-    $order->save();
-
-    return back();
 });

@@ -11,13 +11,18 @@ class HomeController extends Controller
         return view('home', compact('products'));
     }
 
-    public function products() {
-        $products = Product::all();
-        return view('products', compact('products'));
-    }
+    public function products(\Illuminate\Http\Request $request)
+{
+    $keyword = $request->keyword;
+
+    $products = \App\Models\Product::where('name', 'like', "%$keyword%")->get();
+
+    return view('products', compact('products'));
+}
 
     public function detail($id) {
         $p = Product::find($id);
         return view('detail', compact('p'));
     }
+    
 }

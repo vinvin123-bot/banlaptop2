@@ -21,26 +21,48 @@
 
         /* NAVBAR */
         .navbar {
-            background: #020617;
-            border-bottom: 2px solid #7c3aed;
-        }
+    background: linear-gradient(90deg, #020617, #0f172a);
+    border-bottom: 1px solid #7c3aed;
+}
 
-        .navbar a {
-            color: #e5e7eb !important;
-            transition: 0.3s;
-        }
+.navbar .nav-link {
+    color: #e5e7eb;
+    margin: 0 10px;
+    transition: 0.3s;
+}
 
-        .navbar a:hover {
-            color: #7c3aed !important;
-            text-shadow: 0 0 10px #7c3aed;
-        }
+.navbar .nav-link:hover {
+    color: #7c3aed;
+    text-shadow: 0 0 8px #7c3aed;
+}
 
-        /* LOGO */
-        .navbar-brand {
-            font-weight: bold;
-            color: #7c3aed !important;
-        }
+/* SEARCH */
+.search-box {
+    background: #020617;
+    border-radius: 8px;
+    overflow: hidden;
+}
 
+.search-input {
+    border: none;
+    background: transparent;
+    color: white;
+}
+
+.search-input:focus {
+    box-shadow: none;
+}
+
+.search-btn {
+    background: #7c3aed;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+}
+
+.search-btn:hover {
+    background: #6d28d9;
+}
         /* BANNER */
         .banner {
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
@@ -105,19 +127,55 @@
 <body>
 
 <!-- MENU -->
-<nav class="navbar navbar-expand-lg">
-    <div class="container">
-        <a class="navbar-brand" href="/">⚡ VINVIN SHOP</a>
+<nav class="navbar navbar-expand-lg px-4">
+    <div class="container-fluid">
 
-        <div>
-            <a class="me-4" href="/">Trang chủ</a>
-            <a class="me-4" href="/products">Sản phẩm</a>
-            <a class="me-4" href="/cart">Giỏ hàng</a>
-            <a href="#">Liên hệ</a>
+        <!-- LOGO -->
+        <a class="navbar-brand fw-bold text-white" href="/">
+            ⚡ VINVIN SHOP
+        </a>
+
+        <!-- MENU -->
+        <div class="collapse navbar-collapse justify-content-end">
+
+            <ul class="navbar-nav align-items-center">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Trang chủ</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">Sản phẩm</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart">Giỏ hàng</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Liên hệ</a>
+                </li>
+
+                <!-- SEARCH -->
+                <li class="nav-item ms-3">
+                    <form action="/products" method="GET" class="d-flex search-box">
+                        <input 
+                            type="text" 
+                            name="keyword"
+                            value="{{ request('keyword') }}"
+                            placeholder="🔍 Tìm laptop..."
+                            class="form-control search-input"
+                        >
+                        <button class="btn search-btn">Tìm</button>
+                    </form>
+                </li>
+
+            </ul>
+
         </div>
+
     </div>
 </nav>
-
 <!-- BANNER -->
 <div class="banner">
     <h1>🔥 GAMING LAPTOP - CHIẾN MỌI TỰA GAME 🔥</h1>

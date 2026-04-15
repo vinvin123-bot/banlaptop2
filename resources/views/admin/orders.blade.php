@@ -14,9 +14,13 @@
 
         .box {
             background: #1e293b;
-            padding: 20px;
+            padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 0 15px rgba(124,58,237,0.3);
+            box-shadow: 0 0 20px rgba(124,58,237,0.4);
+        }
+
+        h3 {
+            color: #7c3aed;
         }
 
         .table th {
@@ -48,6 +52,22 @@
             background: #6d28d9;
             box-shadow: 0 0 10px #7c3aed;
         }
+
+        .btn-delete {
+            background: #dc2626;
+            border: none;
+        }
+
+        .btn-delete:hover {
+            background: #b91c1c;
+            box-shadow: 0 0 10px #dc2626;
+        }
+
+        .alert-success {
+            background: #22c55e;
+            border: none;
+            color: white;
+        }
     </style>
 </head>
 
@@ -59,9 +79,17 @@
 
         <h3 class="mb-4">📦 Quản lý đơn hàng</h3>
 
+        <!-- THÔNG BÁO -->
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <table class="table table-bordered text-center align-middle">
 
             <tr>
+                <th>#</th>
                 <th>Tên</th>
                 <th>SĐT</th>
                 <th>Tổng tiền</th>
@@ -72,6 +100,7 @@
             @foreach($orders as $o)
 
             <tr>
+                <td>{{ $o->id }}</td>
                 <td>{{ $o->name }}</td>
                 <td>{{ $o->phone }}</td>
                 <td>{{ number_format($o->total) }}đ</td>
@@ -85,16 +114,29 @@
                 </td>
 
                 <td>
+
+                    <!-- GIAO HÀNG -->
                     @if($o->status == 'pending')
                         <a href="/admin/orders/{{ $o->id }}/deliver"
-                           class="btn btn-ship btn-sm text-white">
-                           🚚 Giao hàng
+                           class="btn btn-ship btn-sm text-white mb-1">
+                           🚚 Giao
                         </a>
                     @else
-                        <button class="btn btn-success btn-sm" disabled>
+                        <button class="btn btn-success btn-sm mb-1" disabled>
                             ✔ Đã giao
                         </button>
                     @endif
+
+                    <!-- XÓA -->
+                    <form action="/admin/orders/{{ $o->id }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-delete btn-sm"
+                                onclick="return confirm('Bạn có chắc muốn xóa đơn này?')">
+                            🗑 Xóa
+                        </button>
+                    </form>
+
                 </td>
             </tr>
 

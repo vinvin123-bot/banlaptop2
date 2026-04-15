@@ -125,6 +125,10 @@ Route::middleware(['auth'])->group(function () {
     // Giao hàng
     Route::get('/admin/orders/{id}/deliver', [OrderController::class, 'deliver']);
 
+    // xóa đơn hàng
+
+    Route::delete('/admin/orders/{id}', [OrderController::class, 'destroy']);
+
     // Logout
     Route::post('/logout', function (Request $request) {
         Auth::logout();

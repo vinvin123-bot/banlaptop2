@@ -46,4 +46,11 @@ class OrderController extends Controller
 
         return back();
     }
+    public function destroy($id)
+{
+    $order = \App\Models\Order::find($id);
+    $order->delete();
+
+    return back()->with('success', );
+}
 }

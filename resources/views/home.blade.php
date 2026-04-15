@@ -121,6 +121,13 @@
             background: #020617;
             border-top: 1px solid #7c3aed;
         }
+
+.alert-success {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    color: white;
+    border: none;
+    font-weight: bold;
+}
     </style>
 </head>
 
@@ -178,8 +185,22 @@
 </nav>
 <!-- BANNER -->
 <div class="banner">
-    <h1>🔥 GAMING LAPTOP - CHIẾN MỌI TỰA GAME 🔥</h1>
+    <h1>🔥 LAPTOP GAMING - VĂN PHÒNG - MACBOOK 🔥</h1>
 </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if(session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Đặt hàng thành công!',
+        text: 'Cảm ơn bạn đã mua hàng ❤️',
+        confirmButtonColor: '#7c3aed'
+    });
+</script>
+@endif
 
 <!-- SẢN PHẨM -->
 <div class="container mt-5">

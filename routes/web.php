@@ -63,7 +63,46 @@ Route::post('/login', function (Request $request) {
 
 /*
 |--------------------------------------------------------------------------
-| 3. TẠO ADMIN (chạy 1 lần rồi xóa cũng được)
+| 3. REGISTER (THÊM MỚI)
+|--------------------------------------------------------------------------
+*/
+
+// Form register
+Route::get('/register', function () {
+    if (Auth::check()) {
+        return redirect('/');
+    }
+    return view('register');
+});
+
+// Xử lý register
+Route::post('/register', function (Request $request) {
+
+    // check email tồn tại
+    if (User::where('email', $request->email)->exists()) {
+        return back()->with('error', 'Email đã tồn tại!');
+    }
+
+    // check password
+    if ($request->password !== $request->password_confirmation) {
+        return back()->with('error', 'Mật khẩu không khớp!');
+    }
+
+    // tạo user
+    User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => 'user' // mặc định user
+    ]);
+
+    return redirect('/login')->with('success', 'Đăng ký thành công!');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| 4. TẠO ADMIN (chạy 1 lần rồi xóa cũng được)
 |--------------------------------------------------------------------------
 */
 
@@ -84,7 +123,7 @@ Route::get('/create-admin', function () {
 
 /*
 |--------------------------------------------------------------------------
-| 4. CART
+| 5. CART
 |--------------------------------------------------------------------------
 */
 
@@ -97,7 +136,7 @@ Route::get('/cart', [CartController::class, 'index']);
 
 /*
 |--------------------------------------------------------------------------
-| 5. ORDER
+| 6. ORDER
 |--------------------------------------------------------------------------
 */
 
@@ -110,7 +149,7 @@ Route::post('/checkout', [OrderController::class, 'store']);
 
 /*
 |--------------------------------------------------------------------------
-| 6. ADMIN
+| 7. ADMIN
 |--------------------------------------------------------------------------
 */
 
@@ -125,8 +164,7 @@ Route::middleware(['auth'])->group(function () {
     // Giao hàng
     Route::get('/admin/orders/{id}/deliver', [OrderController::class, 'deliver']);
 
-    // xóa đơn hàng
-
+    // Xóa đơn hàng
     Route::delete('/admin/orders/{id}', [OrderController::class, 'destroy']);
 
     // Logout
@@ -136,4 +174,5 @@ Route::middleware(['auth'])->group(function () {
         $request->session()->regenerateToken();
         return redirect('/login');
     })->name('logout');
+
 });

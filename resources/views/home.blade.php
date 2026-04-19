@@ -139,7 +139,7 @@
 
         <!-- LOGO -->
         <a class="navbar-brand fw-bold text-white" href="/">
-            ⚡ VINVIN SHOP
+            ⚡ MIXI SHOP
         </a>
 
         <!-- MENU -->

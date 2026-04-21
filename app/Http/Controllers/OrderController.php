@@ -13,7 +13,7 @@ class OrderController extends Controller
 
     public function store(Request $request) {
 
-        $cart = session('cart');
+        $cart = session('cart', []);
 
         $total = 0;
 
@@ -26,12 +26,14 @@ class OrderController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'total' => $total,
+            'payment' => $request->payment, // 
+            'payment_status' => 'unpaid',
             'status' => 'pending'
         ]);
 
         session()->forget('cart');
 
-        return redirect('/')->with('success', 'Đặt hàng thành công!');
+        return redirect('/')->with('success', '🎉 Đặt hàng thành công!');
     }
 
     public function admin() {
@@ -40,17 +42,33 @@ class OrderController extends Controller
     }
 
     public function deliver($id) {
-        $order = Order::find($id);
-        $order->status = 'delivered';
-        $order->save();
+    $order = Order::find($id);
 
-        return back();
+    $order->status = 'delivered';
+
+    // 👇 nếu COD thì tự động thanh toán khi giao
+    if($order->payment == 'cod'){
+        $order->payment_status = 'paid';
     }
-    public function destroy($id)
-{
-    $order = \App\Models\Order::find($id);
-    $order->delete();
 
-    return back()->with('success', );
-}
+    $order->save();
+
+    return back();
+    }
+
+    public function destroy($id)
+    {
+        $order = Order::find($id);
+        $order->delete();
+
+        return back()->with('success', 'Đã xóa đơn hàng!');
+    }
+    public function paid($id) {
+    $order = Order::find($id);
+
+    $order->payment_status = 'paid';
+    $order->save();
+
+    return back()->with('success', 'Đã xác nhận thanh toán!');
+    }
 }

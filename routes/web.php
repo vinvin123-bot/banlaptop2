@@ -175,4 +175,6 @@ Route::middleware(['auth'])->group(function () {
         return redirect('/login');
     })->name('logout');
 
+    Route::get('/admin/orders/{id}/paid', [OrderController::class, 'paid']);
+
 });

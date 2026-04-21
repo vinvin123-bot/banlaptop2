@@ -64,7 +64,7 @@
 <!-- MENU -->
 <nav class="navbar navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand text-white" href="/">⚡ GAMING SHOP</a>
+        <a class="navbar-brand text-white" href="/">⚡ MIXI SHOP</a>
 
         <div>
             <a class="me-3" href="/">Trang chủ</a>

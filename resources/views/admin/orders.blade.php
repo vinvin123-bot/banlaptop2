@@ -43,6 +43,16 @@
             font-weight: bold;
         }
 
+        .paid {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .unpaid {
+            color: #facc15;
+            font-weight: bold;
+        }
+
         .btn-ship {
             background: #7c3aed;
             border: none;
@@ -61,6 +71,16 @@
         .btn-delete:hover {
             background: #b91c1c;
             box-shadow: 0 0 10px #dc2626;
+        }
+
+        .btn-paid {
+            background: #22c55e;
+            border: none;
+        }
+
+        .btn-paid:hover {
+            background: #16a34a;
+            box-shadow: 0 0 10px #22c55e;
         }
 
         .alert-success {
@@ -93,6 +113,7 @@
                 <th>Tên</th>
                 <th>SĐT</th>
                 <th>Tổng tiền</th>
+                <th>Thanh toán</th>
                 <th>Trạng thái</th>
                 <th>Hành động</th>
             </tr>
@@ -105,6 +126,22 @@
                 <td>{{ $o->phone }}</td>
                 <td>{{ number_format($o->total) }}đ</td>
 
+                <!-- PHƯƠNG THỨC + TRẠNG THÁI THANH TOÁN -->
+                <td>
+                    @if($o->payment == 'bank')
+                        <div>💳 Chuyển khoản</div>
+                    @else
+                        <div>💵 COD</div>
+                    @endif
+
+                    @if($o->payment_status == 'paid')
+                        <div class="paid">✔ Đã thanh toán</div>
+                    @else
+                        <div class="unpaid">⏳ Chưa thanh toán</div>
+                    @endif
+                </td>
+
+                <!-- TRẠNG THÁI ĐƠN -->
                 <td>
                     @if($o->status == 'pending')
                         <span class="status-pending">⏳ Chờ xử lý</span>
@@ -114,6 +151,14 @@
                 </td>
 
                 <td>
+
+                    <!-- XÁC NHẬN THANH TOÁN -->
+                    @if($o->payment_status == 'unpaid')
+                        <a href="/admin/orders/{{ $o->id }}/paid"
+                           class="btn btn-paid btn-sm text-white mb-1">
+                           💰 Đã thanh toán
+                        </a>
+                    @endif
 
                     <!-- GIAO HÀNG -->
                     @if($o->status == 'pending')
